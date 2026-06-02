@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Server.Data;
@@ -11,9 +12,11 @@ using Server.Data;
 namespace Server.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260529104703_CreateReviewsTable")]
+    partial class CreateReviewsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,39 +24,6 @@ namespace Server.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("VendorId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("VendorId");
-
-                    b.ToTable("Reviews");
-                });
 
             modelBuilder.Entity("Server.Models.Event", b =>
                 {
@@ -136,6 +106,36 @@ namespace Server.Migrations
                     b.ToTable("PackageFeatures");
                 });
 
+            modelBuilder.Entity("Server.Models.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VendorId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("VendorId");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("Server.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -190,9 +190,6 @@ namespace Server.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -295,25 +292,6 @@ namespace Server.Migrations
                     b.ToTable("VendorGalleries");
                 });
 
-            modelBuilder.Entity("Review", b =>
-                {
-                    b.HasOne("Server.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Server.Models.Vendor", "Vendor")
-                        .WithMany("Reviews")
-                        .HasForeignKey("VendorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-
-                    b.Navigation("Vendor");
-                });
-
             modelBuilder.Entity("Server.Models.Package", b =>
                 {
                     b.HasOne("Server.Models.Vendor", "Vendor")
@@ -334,6 +312,25 @@ namespace Server.Migrations
                         .IsRequired();
 
                     b.Navigation("Package");
+                });
+
+            modelBuilder.Entity("Server.Models.Review", b =>
+                {
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Server.Models.Vendor", "Vendor")
+                        .WithMany()
+                        .HasForeignKey("VendorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+
+                    b.Navigation("Vendor");
                 });
 
             modelBuilder.Entity("Server.Models.Vendor", b =>
@@ -374,8 +371,6 @@ namespace Server.Migrations
             modelBuilder.Entity("Server.Models.Vendor", b =>
                 {
                     b.Navigation("Packages");
-
-                    b.Navigation("Reviews");
 
                     b.Navigation("VendorGalleries");
                 });
