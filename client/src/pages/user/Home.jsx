@@ -12,6 +12,20 @@ import bookingImgIcon from "../../assets/iconImage/booking.png";
 import responsiveImgIcon from "../../assets/iconImage/responsive.png";
 import sonyImg from "../../assets/sony.jpg";
 import commaImg from "../../assets/quotes.png";
+import cameraIcon from "../../assets/iconImage/camera.png";
+import balloonsImgIcon from "../../assets/iconImage/balloons.png";
+import cateringIcon from "../../assets/iconImage/catering.png";
+import cateringImg from "../../assets/catering1.jfif";
+import djImg from "../../assets/dj.jfif";
+import djIcon from "../../assets/iconImage/dj.png";
+import yourImage from "../../assets/couple.jfif";
+import hallIcon from "../../assets/iconImage/town-hall.png";
+import hallImg from "../../assets/hall.jpg";
+
+import makeupIcon from "../../assets/iconImage/makeup.png";
+import makeupImg from "../../assets/makeup.jfif";
+
+
 
 import storeImg from "../../assets/iconImage/store.png";
 import { Link } from "react-router-dom";
@@ -22,6 +36,11 @@ import { useState, useRef } from "react";
 
 import "swiper/css";
 import "swiper/css/navigation";
+
+
+// icons
+
+import { CiHeart } from "../../components/icons/icon";
 
 // For now they all reuse sonyImg as a placeholder.
 const testimonials = [
@@ -115,7 +134,64 @@ const categories = [
   },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
+const vendors = [
+  {
+    id: 1,
+    category: "Photography",
+    title: "Standard Video",
+    image: sonyImg,
+    icon: cameraIcon,
+    likes: "3.8k",
+    rating: 4.5,
+  },
+  {
+    id: 2,
+    category: "Catering",
+    title: "Royal Catering",
+    image: cateringImg,
+    icon: cateringIcon,
+    likes: "2.5k",
+    rating: 4.8,
+  },
+  {
+    id: 3,
+    category: "DJ",
+    title: "DJ Beats",
+    image: djImg,
+    icon: djIcon,
+    likes: "4.1k",
+    rating: 4.7,
+  },
+  {
+    id: 4,
+    category: "Hall",
+    title: "Grand Palace Hall",
+    image: hallImg,
+    icon: hallIcon,
+    likes: "3.2k",
+    rating: 4.6,
+  },
+  // {
+  //   id: 5,
+  //   category: "Decoration",
+  //   title: "Luxury Decor",
+  //   image: decorationImg,
+  //   icon: balloonsImgIcon,
+  //   likes: "5.4k",
+  //   rating: 4.9,
+  // },
+  {
+    id: 6,
+    category: "Makeup",
+    title: "Beauty Studio",
+    image: makeupImg,
+    icon: makeupIcon,
+    likes: "2.9k",
+    rating: 4.7,
+  },
+];
+
+
 const Home = () => {
   const [activeReview, setActiveReview] = useState(0);
   const reviewSwiperRef = useRef(null);
@@ -459,6 +535,142 @@ const Home = () => {
 
         </div>
       </div>
+
+<div className="bg-[#648855] py-16 px-4 md:px-8 lg:px-16">
+  {/* Header */}
+  <div className="text-center">
+    <h1 className="text-3xl md:text-5xl font-bold text-white">
+      Top Rated Vendors
+    </h1>
+
+    <p className="text-gray-200 mt-3 text-sm md:text-base">
+      Highly rated service providers from their field
+    </p>
+  </div>
+
+  {/* Cards Container */}
+  <div className="max-w-7xl mx-auto mt-12">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 justify-items-center">
+      {vendors.map((vendor) => (
+        <div
+          key={vendor.id}
+          className="w-full max-w-[280px] bg-white rounded-2xl shadow-lg overflow-hidden hover:-translate-y-2 hover:shadow-2xl transition-all duration-300"
+        >
+          {/* Vendor Image */}
+          <div className="overflow-hidden">
+            <img
+              src={vendor.image}
+              alt={vendor.title}
+              className="w-full h-48 object-cover hover:scale-105 transition duration-500 p-6"
+            />
+          </div>
+
+          {/* Content */}
+          <div className="p-5 flex flex-col items-center text-center">
+            <img
+              src={vendor.icon}
+              alt={vendor.category}
+              className="w-8 h-8 "
+            />
+
+            <p className="text-sm text-gray-500 font-medium">
+              {vendor.category}
+            </p>
+
+            <h3 className="text-lg font-bold text-[#648855] mt-1">
+              {vendor.title}
+            </h3>
+
+            {/* Rating */}
+            <div className="flex items-center gap-2 mt-3">
+              <span className="text-yellow-500 text-lg">★★★★★</span>
+              <span className="text-sm font-medium">
+                {vendor.rating}
+              </span>
+            </div>
+
+            {/* Likes */}
+            <div className="flex items-center gap-1 mt-2 text-gray-600">
+              <CiHeart className="text-xl" />
+              <span>{vendor.likes}</span>
+            </div>
+
+            {/* Button */}
+            <Link
+              to={`/VendorDetails/${vendor.id}`}
+              className="mt-4 bg-[#648855] text-white px-5 py-2 rounded-lg hover:bg-[#4f6b43] transition"
+            >
+              View Details
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</div>
+
+<div className="w-full flex justify-center mt-20 px-4">
+  <div className="flex flex-col sm:flex-row w-full max-w-[1200px] h-auto sm:h-[535px] rounded-2xl overflow-hidden border border-gray-200">
+
+    {/* Left — Image, full height */}
+    <div className="sm:w-[42%] w-full h-56 sm:h-full flex-shrink-0">
+      <img
+        src={yourImage}
+        alt="Newsletter"
+        className="w-full h-full object-cover"
+      />
+    </div>
+
+    {/* Right — Content */}
+    <div className="flex-1 bg-white px-8 py-10 flex flex-col justify-center gap-4">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+        Subscribe to Our Newsletter
+      </h1>
+      <p className="text-sm text-gray-500 leading-relaxed">
+        Get the latest event ideas, offers, and vendor updates straight to your inbox.
+      </p>
+
+      {/* Form — stacked inputs, button at right end */}
+      <div className="flex flex-col gap-4 mt-2 w-full">
+
+        {/* Name field */}
+        <div className="flex flex-col gap-1 w-full">
+          <label className="text-xs font-medium text-gray-500" htmlFor="nl-name">
+            Name
+          </label>
+          <input
+            id="nl-name"
+            type="text"
+            placeholder="Your full name"
+            className="h-11 px-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#648855] w-full"
+          />
+        </div>
+
+        {/* Email field */}
+        <div className="flex flex-col gap-1 w-full">
+          <label className="text-xs font-medium text-gray-500" htmlFor="nl-email">
+            Email
+          </label>
+          <input
+            id="nl-email"
+            type="email"
+            placeholder="you@example.com"
+            className="h-11 px-3 rounded-lg border border-gray-300 text-sm focus:outline-none focus:border-[#648855] w-full"
+          />
+        </div>
+
+        {/* Subscribe button — aligned right */}
+        <div className="flex justify-end">
+          <button className="h-11 px-8 bg-[#648855] hover:bg-[#4f6b43] text-white text-sm font-medium rounded-lg transition whitespace-nowrap">
+            Subscribe
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
 
     </div>
   );
