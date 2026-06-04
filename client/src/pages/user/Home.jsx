@@ -14,16 +14,16 @@ import sonyImg from "../../assets/sony.jpg";
 import commaImg from "../../assets/quotes.png";
 import cameraIcon from "../../assets/iconImage/camera.png";
 import balloonsImgIcon from "../../assets/iconImage/balloons.png";
-import cateringIcon from "../../assets/iconImage/catering.png";
 import cateringImg from "../../assets/catering1.jfif";
 import djImg from "../../assets/dj.jfif";
-import djIcon from "../../assets/iconImage/dj.png";
 import yourImage from "../../assets/couple.jfif";
-import hallIcon from "../../assets/iconImage/town-hall.png";
 import hallImg from "../../assets/hall.jpg";
 
+import djIcon from "../../assets/iconImage/dj.png";
 import makeupIcon from "../../assets/iconImage/makeup.png";
+import hallIcon from "../../assets/iconImage/town-hall.png";
 import makeupImg from "../../assets/makeup.jfif";
+import cateringIcon from "../../assets/iconImage/catering.png";
 
 
 
@@ -265,7 +265,7 @@ const Home = () => {
               <p className="mt-3 text-[14px] text-gray-200 leading-relaxed max-w-[320px]">
                 From vows to celebrations, we help you create your dream wedding effortlessly
               </p>
-              <Link to="/Services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
+              <Link to="/services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
                 Book Now
               </Link>
             </div>
@@ -282,7 +282,7 @@ const Home = () => {
                 <p className="mt-3 text-[12px] md:text-[14px] text-gray-200 leading-tight max-w-[500px]">
                   Professional and seamless event planning for meetings, launches, and celebrations.
                 </p>
-                <Link to="/Services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
+                <Link to="/services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
                   Book Now
                 </Link>
               </div>
@@ -301,7 +301,7 @@ const Home = () => {
                   <div className="relative z-10 h-full flex flex-col justify-end items-center text-center p-6 text-white">
                     <h3 className="text-[30px] sm:text-[38px] xl:text-[28px] font-bold" style={{ fontFamily: "against" }}>{card.title}</h3>
                     <p className="mt-3 text-[14px] text-gray-200 leading-tight">{card.text}</p>
-                    <Link to="/Services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
+                    <Link to="/services" className="mt-5 w-fit bg-[#DCDCC4]/80 backdrop-blur-sm text-gray-900 font-semibold text-[14px] px-6 py-3 rounded-[24px] hover:bg-[#678556] hover:text-white duration-300">
                       Book Now
                     </Link>
                   </div>
@@ -623,7 +623,7 @@ const Home = () => {
 
     {/* Right — Content */}
     <div className="flex-1 bg-white px-8 py-10 flex flex-col justify-center gap-4">
-      <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+      <h1 className="text-2xl md:text-3xl font-bold text-gray-800"  style={{ fontFamily: "against" }}>
         Subscribe to Our Newsletter
       </h1>
       <p className="text-sm text-gray-500 leading-relaxed">

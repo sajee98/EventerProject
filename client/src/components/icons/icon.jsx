@@ -3,13 +3,17 @@ import {
   FaShoppingCart,
   FaHeart,
   FaSearch,
+  FaStar,
+  FaPlus,
+  FaTimes
 } from "react-icons/fa";
 
 import {
   MdDashboard,
   MdEmail,
 } from "react-icons/md";
-import { CiHeart } from "react-icons/ci";
+
+import { CiHeart,CiStar } from "react-icons/ci";
 
 export {
   FaUser,
@@ -18,5 +22,9 @@ export {
   FaSearch,
   MdDashboard,
   MdEmail,
+  FaStar,
     CiHeart,
+    CiStar,
+    FaPlus,
+    FaTimes
 };
