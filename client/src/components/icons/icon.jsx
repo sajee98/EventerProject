@@ -5,7 +5,11 @@ import {
   FaSearch,
   FaStar,
   FaPlus,
-  FaTimes
+  FaTimes,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaFilter,
+  FaShareAlt 
 } from "react-icons/fa";
 
 import {
@@ -26,5 +30,9 @@ export {
     CiHeart,
     CiStar,
     FaPlus,
-    FaTimes
+    FaTimes,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaFilter,
+  FaShareAlt
 };

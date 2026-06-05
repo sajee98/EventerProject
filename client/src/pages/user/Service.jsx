@@ -11,11 +11,11 @@ import hallCard from "../../assets/hall.jpg";
 import djCard from "../../assets/DjCard.Webp";
 import cateringCard from "../../assets/catering1.jfif";
 import decorationCard from "../../assets/decoration.jpg";
-import cameraIconImg from "../../assets/iconImage/camera.png";
+import makeupCard from "../../assets/makeup.jfif";
 import djIcon from "../../assets/iconImage/dj.png";
+import cameraIconImg from "../../assets/iconImage/camera.png";
 import makeupIcon from "../../assets/iconImage/makeup.png";
 import hallIcon from "../../assets/iconImage/town-hall.png";
-import makeupCard from "../../assets/makeup.jfif";
 import cateringIcon from "../../assets/iconImage/catering.png";
 import balloonsImgIcon from "../../assets/iconImage/balloons.png";
 
@@ -170,19 +170,26 @@ const faqs = [
           </div>
         </div>
       </div>
-      <div className="text-center mt-20">
-        <h1 className="text-xl md:text-3xl lg:text-4xl font-bold">
-          Our Exceptional Services
-        </h1>
-        <p
-          className="text-sm text-[#555555] leading-relaxed"
-          style={{ fontFamily: "Roboto" }}
-        >
-          We provide top-notch vendors and event planning solutions to make your
-          celebrations unforgettable. From weddings to corporate events, we
-          bring your vision to life
-        </p>
-      </div>
+    <div className="text-center mt-20 px-4">
+  
+  <h1 className="text-2xl md:text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900">
+    Our Exceptional <span className="text-[#648855]">Services</span>
+  </h1>
+
+  <div className="mt-4 flex justify-center">
+    <div className="w-16 h-[3px] bg-[#648855] rounded-full"></div>
+  </div>
+
+  <p
+    className="mt-5 text-sm md:text-base text-gray-500 leading-relaxed max-w-2xl mx-auto"
+    style={{ fontFamily: "Roboto" }}
+  >
+    We provide premium vendors and event planning solutions to make your
+    celebrations truly unforgettable. From weddings to corporate events,
+    we bring your vision to life with precision, creativity, and care.
+  </p>
+
+</div>
 
 
  <div className="w-full flex justify-center">
@@ -240,7 +247,7 @@ const faqs = [
         "
       >
         {/* Icon */}
-        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center border border-white/30">
           <img
             src={service.icon}
             alt={service.title}
@@ -249,7 +256,7 @@ const faqs = [
         </div>
 
         {/* Title */}
-        <h2 className="mt-2 text-lg sm:text-xl font-bold text-black">
+        <h2 className="mt-2 text-lg sm:text-xl font-bold text-white ">
           {service.title}
         </h2>
 
@@ -268,14 +275,14 @@ const faqs = [
           </p>
 
           <Link
-            to="/"
+            to="/category"
             className="
               inline-block
               px-5
               py-2
               text-sm
               backdrop-blur-md
-              bg-black
+              bg-[#648855]
               border
               border-white/30
               text-white
@@ -299,7 +306,7 @@ const faqs = [
   className="relative h-[430px] w-full bg-cover overflow-hidden"
   style={{
     backgroundImage: `url(${flowerBg})`,
-    backgroundPosition: "center 70%"   // 👈 adjust this
+    backgroundPosition: "center 70%"   
   }}
 >
  <div className="absolute inset-0 bg-white/40"></div>
@@ -337,61 +344,69 @@ const faqs = [
 
 {/* FAQ */}
 
-<div className="w-full flex justify-center px-4 py-10 bg-[#648855] mt-10">
-      <div className="w-full max-w-3xl">
+    <div className="w-full px-4">
 
-        {/* TITLE */}
-        <h1 className="text-3xl font-bold text-white text-center mb-6">FAQ</h1>
+  <div className="w-full flex flex-col items-center py-10 bg-[#648855] mt-10 rounded-xl">
 
-        {/* SEARCH */}
-        <input
-  type="text"
-  placeholder="Search FAQs..."
-  className="w-2/3 mx-auto block bg-white p-3 rounded-lg mb-6 outline-none focus:ring-2 focus:ring-green-400"
-  onChange={(e) => setSearch(e.target.value)}
-/>
+    {/* TITLE */}
+    <h1 className="text-3xl font-bold text-white text-center mb-6">
+      FAQ
+    </h1>
 
-        {/* FAQ LIST */}
-        <div className="space-y-2">
-          {filteredFaqs.map((faq) => (
-            <div
-              key={faq.id}
-              className=" rounded-lg overflow-hidden bg-white shadow-sm"
-            >
-              {/* QUESTION */}
-              <button
-                onClick={() => toggle(faq.id)}
-                className="w-full flex justify-between items-center p-4 bg-white hover:bg-gray-50"
-              >
-                <span className="font-medium text-left">
-                  {faq.question}
-                </span>
+    {/* SEARCH */}
+    <input
+      type="text"
+      placeholder="Search FAQs..."
+      className="w-full max-w-2xl bg-white p-3 rounded-lg mb-6 outline-none focus:ring-2 focus:ring-white/40"
+      onChange={(e) => setSearch(e.target.value)}
+    />
 
-                {openId === faq.id ? (
-                  <FaTimes className="text-red-500" />
-                ) : (
-                  <FaPlus className="text-black" />
-                )}
-              </button>
+    {/* FAQ LIST */}
+    <div className="space-y-2 w-full max-w-4xl">
 
-              {/* ANSWER */}
-              <div
-                className={`px-4 overflow-hidden transition-all duration-500 ${
-                  openId === faq.id
-                    ? "max-h-40 py-3 opacity-100"
-                    : "max-h-0 opacity-0"
-                }`}
-              >
-                <p className="text-gray-600 text-sm bg-white ">
-                  {faq.answer}
-                </p>
-              </div>
-            </div>
-          ))}
+      {filteredFaqs.map((faq) => (
+        <div
+          key={faq.id}
+          className="rounded-lg overflow-hidden bg-white shadow-sm"
+        >
+
+          {/* QUESTION */}
+          <button
+            onClick={() => toggle(faq.id)}
+            className="w-full flex justify-between items-center p-4 hover:bg-gray-50"
+          >
+            <span className="font-medium text-left">
+              {faq.question}
+            </span>
+
+            {openId === faq.id ? (
+              <FaTimes className="text-red-500" />
+            ) : (
+              <FaPlus className="text-black" />
+            )}
+          </button>
+
+          {/* ANSWER */}
+          <div
+            className={`px-4 overflow-hidden transition-all duration-500 ${
+              openId === faq.id
+                ? "max-h-40 py-3 opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            <p className="text-gray-600 text-sm">
+              {faq.answer}
+            </p>
+          </div>
+
         </div>
+      ))}
 
-      </div>
     </div>
+
+  </div>
+
+</div>
     </div>
   );
 };

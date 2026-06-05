@@ -18,7 +18,10 @@ import cateringImg from "../../assets/catering1.jfif";
 import djImg from "../../assets/dj.jfif";
 import yourImage from "../../assets/couple.jfif";
 import hallImg from "../../assets/hall.jpg";
-
+import cateringCard from "../../assets/catering1.jfif";
+import decorationCard from "../../assets/decoration.jpg";
+import hallCard from "../../assets/hall.jpg";
+import djCard from "../../assets/DjCard.Webp";
 import djIcon from "../../assets/iconImage/dj.png";
 import makeupIcon from "../../assets/iconImage/makeup.png";
 import hallIcon from "../../assets/iconImage/town-hall.png";
@@ -106,19 +109,19 @@ const categories = [
     id: 2,
     title: "Decoration",
     description: "Elegant decorations for every event",
-    image: sonyImg,
+    image: decorationCard,
   },
   {
     id: 3,
     title: "Catering",
     description: "Delicious food for your guests",
-    image: sonyImg,
+    image: cateringCard,
   },
   {
     id: 4,
     title: "Music & DJ",
     description: "Create the perfect party atmosphere",
-    image: sonyImg,
+    image: djCard,
   },
   {
     id: 5,
@@ -130,7 +133,7 @@ const categories = [
     id: 6,
     title: "Wedding Planning",
     description: "Stress-free event management",
-    image: sonyImg,
+    image: hallCard,
   },
 ];
 
@@ -212,34 +215,100 @@ const Home = () => {
     <div className="w-full overflow-x-hidden min-h-screen bg-[#F0EAD6]">
 
       {/* ── HERO ── */}
-      <div className="flex flex-col md:flex-row items-center bg-white justify-between min-h-screen py-10 sm:py-4">
-        <div className="w-full md:w-3/4 px-6 md:px-20 py-4 sm:py-0 md:py-10 text-center md:text-left">
+    <div className="relative w-full min-h-screen bg-white overflow-hidden flex items-center font-['Montserrat',_sans-serif]">
+ 
+      {/* ── Background soft shapes ── */}
+      <div className="absolute top-0 right-0 w-[55%] h-full bg-[#648855]/[0.06] rounded-bl-[80px] pointer-events-none hidden md:block" />
+      <div className="absolute -top-20 -left-20 w-72 h-72 rounded-full bg-[#648855]/[0.07] pointer-events-none" />
+      <div className="absolute bottom-10 left-40 w-40 h-40 rounded-full bg-[#648855]/[0.05] pointer-events-none hidden lg:block" />
+ 
+      {/* ── Dot pattern top-right ── */}
+      <div
+        className="absolute top-0 right-0 w-[45%] h-full opacity-[0.07] pointer-events-none hidden md:block"
+        style={{
+          backgroundImage: "radial-gradient(circle, #648855 1.2px, transparent 1.2px)",
+          backgroundSize: "22px 22px",
+        }}
+      />
+ 
+      {/* ── Main content ── */}
+      <div className="relative z-10 w-full flex flex-col md:flex-row items-center justify-between px-6 sm:px-10 md:px-16 lg:px-24 py-16 md:py-0 gap-10 md:gap-6">
+ 
+        {/* LEFT */}
+        <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left">
+ 
+          {/* Eyebrow badge */}
+          <span className="inline-flex items-center gap-2 bg-[#648855]/10 border border-[#648855]/25 text-[#648855] text-[10px] font-semibold tracking-[2px] uppercase px-4 py-[7px] rounded-full mb-6">
+            ✦ Your Event Partner
+          </span>
+ 
+          {/* Heading */}
           <h1
             style={{ fontFamily: "against" }}
-            className="text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 leading-tight"
+            className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-[1.1] tracking-tight"
           >
-            Discover Amazing <br /> Services Near You
+            Discover Amazing <br />
+            <span className="text-[#648855]">Services</span> Near You
           </h1>
+ 
+          {/* Green underline accent */}
+          <div className="mt-5 w-16 h-[3px] bg-[#648855] rounded-full" />
+ 
+          {/* Subtitle */}
           <p
             style={{ fontFamily: "Montserrat" }}
-            className="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed"
+            className="mt-5 max-w-[440px] text-gray-500 text-sm sm:text-base leading-relaxed font-light"
           >
             Explore concerts, festivals, workshops, and more. Book your tickets
-            and never miss out on unforgettable experiences.
+            and never miss out on unforgettable experiences tailored just for you.
           </p>
-          <button className="mt-6 bg-[#789667] text-white px-6 py-3 rounded-[8px] hover:bg-[#678556] transition flex items-center gap-2 mx-auto md:mx-0">
-            Explore Events
-            <FaArrowRight />
-          </button>
+ 
+          {/* CTA row */}
+          <div className="mt-8 flex flex-wrap gap-3 items-center justify-center md:justify-start">
+            <button className="flex items-center gap-2 bg-[#648855] hover:bg-[#527044] text-white text-[13px] font-semibold tracking-wide px-7 py-[13px] rounded-md transition-colors duration-200 shadow-sm">
+              Explore Events
+              <FaArrowRight className="text-[11px]" />
+            </button>
+            <button className="flex items-center gap-2 border border-[#648855] text-[#648855] hover:bg-[#648855]/5 text-[13px] font-medium px-6 py-[13px] rounded-md transition-colors duration-200">
+              Learn More
+            </button>
+          </div>
+ 
+          {/* Trust row */}
+          <div className="mt-10 flex items-center gap-6 flex-wrap justify-center md:justify-start">
+            {[
+              { num: "850+", label: "Events" },
+              { num: "120+", label: "Vendors" },
+              { num: "4.9★", label: "Rating" },
+            ].map((s, i) => (
+              <div key={i} className="flex flex-col items-center md:items-start">
+                <span className="text-[#648855] text-xl font-bold leading-none">{s.num}</span>
+                <span className="text-gray-400 text-[10px] tracking-[1px] uppercase mt-1">{s.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="hidden md:flex w-full md:w-1/2 justify-center items-center">
+ 
+        {/* RIGHT — Image */}
+        <div className="w-full md:w-1/2 flex justify-center items-end relative">
+ 
+          {/* Card frame behind image */}
+          <div className="absolute inset-4 md:inset-6 bg-[#648855]/10 rounded-2xl md:rounded-3xl" />
+          {/* Floating stat card bottom */}
+          <div className="absolute bottom-6 right-4 md:-right-2 z-20 bg-white border border-[#648855]/15 rounded-xl px-4 py-3 shadow-sm">
+            <p className="text-[10px] text-gray-400 uppercase tracking-wide">Happy Clients</p>
+            <p className="text-lg font-bold text-[#648855] leading-none mt-1">2,400+</p>
+          </div>
+ 
+          {/* Main image */}
           <img
             src={banner}
-            alt="banner"
-            className="w-full max-w-[500px] h-auto object-cover rounded-lg"
+            alt="Event services banner"
+            className="relative z-10 w-full max-w-[480px] h-auto object-cover rounded-2xl md:rounded-3xl"
           />
         </div>
       </div>
+    </div>
 
       {/* ── FOR YOU ── */}
       <div className="flex flex-col items-center md:mt-20 mt-2 bg-[#789667] min-h-screen py-10 px-4">

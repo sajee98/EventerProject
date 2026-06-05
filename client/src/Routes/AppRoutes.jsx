@@ -10,6 +10,7 @@ import Home from "../pages/user/Home";
 // Lazy loaded components
 const About = lazy(() => import("../pages/user/About"));
 const Services = lazy(() => import("../pages/user/Service"));
+const Category = lazy(() => import("../pages/user/Category"));
 
 //admin
 import AdminLayout from "../Layouts/AdminLayout";
@@ -29,6 +30,7 @@ function AppRoutes() {
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
+            <Route path="category" element={<Category />} />
           </Route>
 
           {/* Admin Routes */}
