@@ -11,6 +11,7 @@ import Home from "../pages/user/Home";
 const About = lazy(() => import("../pages/user/About"));
 const Services = lazy(() => import("../pages/user/Service"));
 const Category = lazy(() => import("../pages/user/Category"));
+const VendorDetails =lazy(() => import("../pages/user/VendorDetails"))
 
 //admin
 import AdminLayout from "../Layouts/AdminLayout";
@@ -31,6 +32,7 @@ function AppRoutes() {
             <Route path="about" element={<About />} />
             <Route path="services" element={<Services />} />
             <Route path="category" element={<Category />} />
+            <Route path="vendor" element={<VendorDetails />} />
           </Route>
 
           {/* Admin Routes */}
