@@ -6,6 +6,7 @@ import { lazy, Suspense } from 'react';
 // Standard imports
 import MainLayout from "../Layouts/MainLayout";
 import Home from "../pages/user/Home";
+import Login from "../pages/user/login.jsx";
 
 // Lazy loaded components
 const About = lazy(() => import("../pages/user/About"));
@@ -18,6 +19,7 @@ const Checkout = lazy(() => import("../pages/user/Checkout"));
 //admin
 import AdminLayout from "../Layouts/AdminLayout";
 import Dashboard from "../pages/admin/Dashboard";
+import VendorRegister from "../pages/admin/VendorRegister.jsx";
 
 const Vendors = lazy(() => import("../pages/admin/Vendor"));
 
@@ -37,11 +39,12 @@ function AppRoutes() {
             <Route path="vendor" element={<VendorDetails />} />
             <Route path="checkout" element={<Checkout />} />
           </Route>
-
+          <Route path="/login" element={<Login />} />
           {/* Admin Routes */}
        <Route path="/admin" element={<AdminLayout />}>
           <Route path="dashboard" element={<Dashboard />} />
             <Route path="vendors" element={<Vendors />} />
+            <Route path="vendor-register" element={<VendorRegister />} />
         </Route>
         </Routes>
       </Suspense>

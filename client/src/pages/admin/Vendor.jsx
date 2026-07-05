@@ -1,4 +1,28 @@
 import { useState } from "react";
+import {
+  Plus,
+  Search,
+  Eye,
+  Pencil,
+  Trash2,
+  UtensilsCrossed,
+  Palette,
+  Music,
+  Building2,
+  Mail,
+  Phone,
+} from "lucide-react";
+
+const SERVICE_ICON = {
+  "Food & Catering": UtensilsCrossed,
+  "Decoration": Palette,
+  "Sound System": Music,
+};
+
+const STATUS_STYLE = {
+  Active: "bg-[#EAFBF3] text-[#188F65]",
+  Pending: "bg-[#FFF6E6] text-[#B8790B]",
+};
 
 function Vendors() {
   const [vendors] = useState([
@@ -29,71 +53,215 @@ function Vendors() {
   ]);
 
   return (
-    <div>
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Vendors</h1>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-[#1C1830] sm:text-3xl">Vendors</h1>
+          <p className="mt-1 text-sm text-[#8A85A0]">
+            Manage the vendors working on your events.
+          </p>
+        </div>
 
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
-          + Add Vendor
+        <button className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-[#7C6AEF] to-[#5B4BD1] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-transform hover:shadow-md active:scale-[0.98]">
+          <Plus size={17} />
+          Add Vendor
         </button>
       </div>
 
+      {/* Search */}
+      <div className="relative max-w-xs">
+        <Search
+          size={16}
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#B0ACC4]"
+        />
+        <input
+          type="text"
+          placeholder="Search vendors..."
+          className="w-full rounded-xl border border-[#EDEBF7] bg-white py-2.5 pl-9 pr-3 text-sm text-[#1C1830] placeholder:text-[#B0ACC4] focus:border-[#7C6AEF] focus:outline-none focus:ring-2 focus:ring-[#7C6AEF]/20"
+        />
+      </div>
+
       {/* Table */}
-      <div className="bg-white shadow-md rounded-2xl overflow-hidden">
-        <table className="w-full text-left">
-
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-4">ID</th>
-              <th className="p-4">Name</th>
-              <th className="p-4">Service</th>
-              <th className="p-4">Email</th>
-              <th className="p-4">Phone</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {vendors.map((vendor) => (
-              <tr key={vendor.id} className="border-t">
-
-                <td className="p-4">{vendor.id}</td>
-                <td className="p-4 font-semibold">{vendor.name}</td>
-                <td className="p-4">{vendor.service}</td>
-                <td className="p-4">{vendor.email}</td>
-                <td className="p-4">{vendor.phone}</td>
-
-                <td className="p-4">
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      vendor.status === "Active"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {vendor.status}
-                  </span>
-                </td>
-
-                <td className="p-4 flex gap-2">
-
-                  <button className="bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded">
-                    Edit
-                  </button>
-
-                  <button className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">
-                    Delete
-                  </button>
-
-                </td>
-
+      <div className="overflow-hidden rounded-2xl border border-[#EDEBF7] bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-[#EDEBF7] bg-[#FAFAFC] text-xs uppercase tracking-wide text-[#B0ACC4]">
+                <th className="px-5 py-3.5 font-medium">Vendor</th>
+                <th className="px-5 py-3.5 font-medium">Service</th>
+                <th className="px-5 py-3.5 font-medium">Contact</th>
+                <th className="px-5 py-3.5 font-medium">Status</th>
+                <th className="px-5 py-3.5 text-right font-medium">Actions</th>
               </tr>
-            ))}
-          </tbody>
+            </thead>
 
-        </table>
+            <tbody>
+              {vendors.map((vendor) => {
+                const ServiceIcon = SERVICE_ICON[vendor.service] ?? Building2;
+                return (
+                  <tr
+                    key={vendor.id}
+                    className="border-t border-[#F4F2FA] transition-colors hover:bg-[#FAFAFC]"
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7C6AEF] to-[#E6417A] text-sm font-semibold text-white">
+                          {vendor.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-[#1C1830]">{vendor.name}</p>
+                          <p className="text-xs text-[#B0ACC4]">ID #{String(vendor.id).padStart(3, "0")}</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <span className="flex w-fit items-center gap-1.5 rounded-full bg-[#F4F2FA] px-3 py-1 text-xs font-medium text-[#5F5A78]">
+                        <ServiceIcon size={13} />
+                        {vendor.service}
+                      </span>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex flex-col gap-1 text-xs text-[#5F5A78]">
+                        <span className="flex items-center gap-1.5">
+                          <Mail size={13} className="text-[#B0ACC4]" />
+                          {vendor.email}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Phone size={13} className="text-[#B0ACC4]" />
+                          {vendor.phone}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[vendor.status]}`}
+                      >
+                        {vendor.status}
+                      </span>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          title="View"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#F4F2FA] hover:text-[#7C6AEF]"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button
+                          title="Edit"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#FFF6E6] hover:text-[#B8790B]"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          title="Delete"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#FDF0F0] hover:text-[#E5484D]"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+       <div className="overflow-hidden rounded-2xl border border-[#EDEBF7] bg-white shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[720px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-[#EDEBF7] bg-[#FAFAFC] text-xs uppercase tracking-wide text-[#B0ACC4]">
+                <th className="px-5 py-3.5 font-medium">Vendor</th>
+                <th className="px-5 py-3.5 font-medium">Service</th>
+                <th className="px-5 py-3.5 font-medium">Contact</th>
+                <th className="px-5 py-3.5 font-medium">Status</th>
+                <th className="px-5 py-3.5 text-right font-medium">Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {vendors.map((vendor) => {
+                const ServiceIcon = SERVICE_ICON[vendor.service] ?? Building2;
+                return (
+                  <tr
+                    key={vendor.id}
+                    className="border-t border-[#F4F2FA] transition-colors hover:bg-[#FAFAFC]"
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#7C6AEF] to-[#E6417A] text-sm font-semibold text-white">
+                          {vendor.name.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-[#1C1830]">{vendor.name}</p>
+                          <p className="text-xs text-[#B0ACC4]">ID #{String(vendor.id).padStart(3, "0")}</p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <span className="flex w-fit items-center gap-1.5 rounded-full bg-[#F4F2FA] px-3 py-1 text-xs font-medium text-[#5F5A78]">
+                        <ServiceIcon size={13} />
+                        {vendor.service}
+                      </span>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex flex-col gap-1 text-xs text-[#5F5A78]">
+                        <span className="flex items-center gap-1.5">
+                          <Mail size={13} className="text-[#B0ACC4]" />
+                          {vendor.email}
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <Phone size={13} className="text-[#B0ACC4]" />
+                          {vendor.phone}
+                        </span>
+                      </div>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <span
+                        className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLE[vendor.status]}`}
+                      >
+                        {vendor.status}
+                      </span>
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          title="View"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#F4F2FA] hover:text-[#7C6AEF]"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button
+                          title="Edit"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#FFF6E6] hover:text-[#B8790B]"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          title="Delete"
+                          className="rounded-lg p-2 text-[#8A85A0] transition-colors hover:bg-[#FDF0F0] hover:text-[#E5484D]"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
