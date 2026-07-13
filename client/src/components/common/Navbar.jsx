@@ -1,10 +1,12 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaHeart, FaUser, FaBars, FaTimes } from "react-icons/fa";
+import { FaHeart, FaUser, FaBars, FaTimes, FaSignOutAlt } from "react-icons/fa";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   const navLinkClass = ({ isActive }) =>
     `transition-colors duration-200 ${
@@ -12,6 +14,19 @@ export default function Navbar() {
         ? "text-[#fff] font-medium bg-[#648855] px-2 py-1 rounded"
         : "text-gray-700 hover:text-[#789667]"
     }`;
+
+  const handleUserIconClick = () => {
+    if (user) {
+      navigate("/user/dashboard");
+    } else {
+      navigate("/login");
+    }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/login");
+  };
 
   return (
     <>
@@ -55,11 +70,23 @@ export default function Navbar() {
             </button>
 
             <button
-              onClick={() => navigate("/user/dashboard")}
+              onClick={handleUserIconClick}
               className="text-gray-700 hover:text-[#789667] text-xl transition"
+              title={user ? "Admin panel" : "Log in"}
             >
               <FaUser />
             </button>
+
+            {/* Only shown when logged in */}
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="text-gray-700 hover:text-red-500 text-xl transition"
+                title="Log out"
+              >
+                <FaSignOutAlt />
+              </button>
+            )}
 
             {/* MOBILE MENU BUTTON */}
             <button
@@ -105,6 +132,18 @@ export default function Navbar() {
             >
               Contact
             </NavLink>
+
+            {user && (
+              <button
+                onClick={() => {
+                  setMenuOpen(false);
+                  handleLogout();
+                }}
+                className="text-left text-red-600 font-medium"
+              >
+                Log out
+              </button>
+            )}
           </div>
         )}
       </nav>
@@ -114,4 +153,3 @@ export default function Navbar() {
     </>
   );
 }
-

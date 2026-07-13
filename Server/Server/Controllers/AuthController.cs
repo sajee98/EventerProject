@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Server.DTOs;
 using Server.Services.Interfaces;
+using System.Security.Claims;
 
 namespace Server.Controllers
 {
@@ -18,29 +20,71 @@ namespace Server.Controllers
         [HttpPost("login")]
         public IActionResult Login(LoginDto dto)
         {
-            try
-            {
-                var result = _authService.Login(dto);
+            var result = _authService.Login(dto);
 
-                return Ok(result);
-            }
-            catch (Exception ex)
+            if (!result.Success)
             {
-                return StatusCode(500, new
+                return Unauthorized(new
                 {
                     success = false,
-                    error = ex.Message
+                    message = result.Message
                 });
             }
+
+            Response.Cookies.Append(
+                "access_token",
+                result.Token,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = false,
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTime.UtcNow.AddDays(7)
+                });
+
+            return Ok(new
+            {
+                success = true,
+                message = result.Message,
+                user = result.User
+            });
         }
 
         [HttpPost("logout")]
         public IActionResult Logout()
         {
+            Response.Cookies.Delete("access_token");
+
             return Ok(new
             {
                 success = true,
-                message = "Logged out successfully. Please remove token from client."
+                message = "Logged out successfully."
+            });
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            // At this point [Authorize] has already validated the JWT
+            // (pulled from the access_token cookie via OnMessageReceived in Program.cs).
+            // We just read the claims that GenerateJwtToken put on the token.
+
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var name = User.FindFirstValue(ClaimTypes.Name);
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            return Ok(new
+            {
+                success = true,
+                user = new UserDto
+                {
+                    Id = int.Parse(id!),
+                    Name = name!,
+                    Email = email!,
+                    Role = role!
+                }
             });
         }
     }

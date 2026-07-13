@@ -4,6 +4,6 @@ namespace Server.Services.Interfaces
 {
     public interface IAuthService
     {
-        object Login(LoginDto dto);
+        LoginResponseDto Login(LoginDto dto);
     }
 }

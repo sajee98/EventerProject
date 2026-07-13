@@ -80,7 +80,7 @@ namespace Server.Controllers
                     PasswordHash = hashedPassword,
                     Phone = dto.Phone,
                     Address = dto.Address,
-                    Role = string.IsNullOrEmpty(dto.Role) ? "user" : dto.Role,
+                      Role = "user",
                     IsActive = true
                 };
 
@@ -179,7 +179,6 @@ namespace Server.Controllers
                 user.Email = dto.Email;
                 user.Phone = dto.Phone;
                 user.Address = dto.Address;
-                user.Role = dto.Role;
 
                 _context.SaveChanges();
 

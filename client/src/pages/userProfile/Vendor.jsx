@@ -175,7 +175,7 @@ function Vendors() {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1C1830] sm:text-3xl">Vendors from admins</h1>
+          <h1 className="text-2xl font-bold text-[#1C1830] sm:text-3xl">Vendors</h1>
           <p className="mt-1 text-sm text-[#8A85A0]">
             Manage the vendors working on your events.
           </p>

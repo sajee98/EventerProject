@@ -21,17 +21,16 @@ namespace Server.Services
             _configuration = configuration;
         }
 
-        public object Login(LoginDto dto)
+        public LoginResponseDto Login(LoginDto dto)
         {
-            var user = _context.Users
-                .FirstOrDefault(x => x.Email == dto.Email);
+            var user = _context.Users.FirstOrDefault(x => x.Email == dto.Email);
 
             if (user == null)
             {
-                return new
+                return new LoginResponseDto
                 {
-                    success = false,
-                    message = "Invalid email or password"
+                    Success = false,
+                    Message = "Invalid email or password"
                 };
             }
 
@@ -39,17 +38,16 @@ namespace Server.Services
 
             if (user.PasswordHash != hashedPassword)
             {
-                return new
+                return new LoginResponseDto
                 {
-                    success = false,
-                    message = "Invalid email or password"
+                    Success = false,
+                    Message = "Invalid email or password"
                 };
             }
 
             var token = GenerateJwtToken(user);
 
-            // ROLE MESSAGE
-            string dashboardMessage = "";
+            string dashboardMessage;
 
             if (user.Role.ToLower() == "admin")
             {
@@ -64,17 +62,17 @@ namespace Server.Services
                 dashboardMessage = "Welcome Vendor Dashboard";
             }
 
-            return new
+            return new LoginResponseDto
             {
-                success = true,
-                token,
-                message = dashboardMessage,
-                user = new
+                Success = true,
+                Token = token,
+                Message = dashboardMessage,
+                User = new UserDto
                 {
-                    user.Id,
-                    user.Name,
-                    user.Email,
-                    user.Role
+                    Id = user.Id,
+                    Name = user.Name,
+                    Email = user.Email,
+                    Role = user.Role
                 }
             };
         }
@@ -90,20 +88,17 @@ namespace Server.Services
             };
 
             var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
+                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!)
             );
 
-            var creds = new SigningCredentials(
-                key,
-                SecurityAlgorithms.HmacSha256
-            );
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddDays(7),
-                signingCredentials: creds
+                expires: DateTime.UtcNow.AddDays(7),
+                signingCredentials: credentials
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
@@ -113,10 +108,7 @@ namespace Server.Services
         {
             using (var sha = SHA256.Create())
             {
-                var bytes = sha.ComputeHash(
-                    Encoding.UTF8.GetBytes(password)
-                );
-
+                var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return Convert.ToBase64String(bytes);
             }
         }

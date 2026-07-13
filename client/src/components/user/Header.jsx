@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Menu, Search, Bell, ChevronDown, LogOut, User } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
-function AdminNavbar({ onMenuClick = () => {} }) {
+function Header({ onMenuClick = () => {} }) {
   const [profileOpen, setProfileOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const { user, logout } = useAuth();
@@ -13,8 +13,8 @@ function AdminNavbar({ onMenuClick = () => {} }) {
     if (loggingOut) return;
     setLoggingOut(true);
     try {
-      await logout(); 
-      navigate("/admin/login", { replace: true });
+      await logout();
+      navigate("/", { replace: true });
     } finally {
       setLoggingOut(false);
       setProfileOpen(false);
@@ -73,17 +73,16 @@ function AdminNavbar({ onMenuClick = () => {} }) {
             className="flex items-center gap-2 rounded-lg py-1.5 pl-1.5 pr-2 hover:bg-[#F4F2FA]"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#7C6AEF] to-[#E6417A] text-sm font-semibold text-white">
-              {user?.name?.[0]?.toUpperCase() || "A"}
+              {user?.name?.[0]?.toUpperCase() || "U"}
             </div>
             <span className="hidden text-sm font-medium text-[#1C1830] sm:block">
-              {user?.name || "Admin"}
+              {user?.name || "Account"}
             </span>
             <ChevronDown size={15} className="hidden text-[#8A85A0] sm:block" />
           </button>
 
           {profileOpen && (
             <>
-              {/* Click-away overlay so opening elsewhere on the page closes the menu */}
               <div
                 className="fixed inset-0 z-10"
                 onClick={() => setProfileOpen(false)}
@@ -112,4 +111,4 @@ function AdminNavbar({ onMenuClick = () => {} }) {
   );
 }
 
-export default AdminNavbar;
+export default Header;

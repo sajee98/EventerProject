@@ -13,12 +13,12 @@ import {
 
 // Add / remove items here as your routes grow.
 const NAV_ITEMS = [
-  { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/admin/bookings", label: "Bookings", icon: Ticket },
-  { to: "/admin/events", label: "Events", icon: CalendarDays },
-  { to: "/admin/vendors", label: "Vendors", icon: Users },
-  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
-  { to: "/admin/settings", label: "Settings", icon: Settings },
+  { to: "/user/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/user/bookings", label: "Bookings", icon: Ticket },
+  { to: "/user/events", label: "Events", icon: CalendarDays },
+  { to: "/user/vendors", label: "Vendors", icon: Users },
+  { to: "/user/analytics", label: "Analytics", icon: BarChart3 },
+  { to: "/user/settings", label: "Settings", icon: Settings },
 ];
 
 function Sidebar({ isOpen = false, onClose = () => {} }) {
@@ -56,7 +56,7 @@ function Sidebar({ isOpen = false, onClose = () => {} }) {
             </div>
             <h1 className="font-[600] text-xl tracking-tight text-white">
               Eventer
-              <span className="ml-1 font-normal text-[#9490AC]">Admin</span>
+              <span className="ml-1 font-normal text-[#9490AC]">User</span>
             </h1>
           </div>
 
