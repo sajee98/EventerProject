@@ -3,213 +3,331 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.DTOs;
-using Server.Models;
 using Server.Helpers;
+using Server.Models;
 using System.Security.Claims;
+
 
 namespace Server.Controllers
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class VendorController : ControllerBase
     {
+
         private readonly AppDbContext _context;
+
 
         public VendorController(AppDbContext context)
         {
             _context = context;
         }
 
-        // =========================
-        // CREATE VENDOR
-        // =========================
-        [HttpPost]
-        [Authorize(Roles = "vendor,admin")]
-        public async Task<IActionResult> CreateVendor(
-            [FromForm] CreateVendorDto dto,
-            IFormFile logo,
-            List<IFormFile>? galleryImages)
+
+
+        // GET MY VENDORS
+
+        [HttpGet("my")]
+        [Authorize]
+        public async Task<IActionResult> GetMyVendors()
         {
-            try
+
+            var userId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
+
+
+           var vendors = await _context.Vendors
+    .Where(v => v.UserId == userId)
+    .Include(v => v.User)
+    .Include(v => v.VendorCategory)
+      .Include(v => v.Packages)
+        .ThenInclude(p => p.PackageFeatures)
+    .Include(v => v.VendorGalleries)
+    .Include(v => v.Reviews)
+    .ToListAsync();
+
+
+
+            return Ok(new
             {
-                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+                success = true,
+                vendors
+            });
 
-                // LIMIT VENDORS
-                var vendorCount = await _context.Vendors
-                    .CountAsync(v => v.UserId == userId);
-
-                if (vendorCount >= 3)
-                {
-                    return BadRequest(new
-                    {
-                        success = false,
-                        message = "You can only create up to 3 vendors."
-                    });
-                }
-
-                // SLUG GENERATION
-                var baseSlug = SlugHelper.GenerateSlug(dto.VendorName);
-                var slug = baseSlug;
-                int counter = 1;
-
-                while (await _context.Vendors.AnyAsync(v => v.Slug == slug))
-                {
-                    slug = $"{baseSlug}-{counter}";
-                    counter++;
-                }
-
-                // LOGO
-                string logoPath = "";
-
-                if (logo != null)
-                {
-                    var fileName = Guid.NewGuid() + Path.GetExtension(logo.FileName);
-                    var path = Path.Combine("wwwroot/uploads", fileName);
-
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await logo.CopyToAsync(stream);
-                    }
-
-                    logoPath = "/uploads/" + fileName;
-                }
-
-                // CREATE VENDOR
-                var vendor = new Vendor
-                {
-                    UserId = userId,
-                    VendorCategoryId = dto.VendorCategoryId,
-                    VendorName = dto.VendorName,
-                    Slug = slug,
-                    Phone = dto.Phone,
-                    Email = dto.Email,
-                    Address = dto.Address,
-                    Facebook = dto.Facebook,
-                    Instagram = dto.Instagram,
-                    Tiktok = dto.Tiktok,
-                    LogoImg = logoPath,
-                    IsActive = true
-                };
-
-                _context.Vendors.Add(vendor);
-                await _context.SaveChangesAsync();
-
-                // =========================
-                // GALLERY (SAFE)
-                // =========================
-                if (galleryImages != null && galleryImages.Count > 0)
-                {
-                    foreach (var image in galleryImages)
-                    {
-                        var fileName = Guid.NewGuid() + Path.GetExtension(image.FileName);
-                        var path = Path.Combine("wwwroot/uploads", fileName);
-
-                        using (var stream = new FileStream(path, FileMode.Create))
-                        {
-                            await image.CopyToAsync(stream);
-                        }
-
-                        _context.VendorGalleries.Add(new VendorGallery
-                        {
-                            VendorId = vendor.Id,
-                            ImageUrl = "/uploads/" + fileName
-                        });
-                    }
-                }
-
-                // =========================
-                // PACKAGES (SAFE)
-                // =========================
-                if (dto.Packages != null && dto.Packages.Count > 0)
-                {
-                    foreach (var p in dto.Packages)
-                    {
-                        var package = new Package
-                        {
-                            VendorId = vendor.Id,
-                            Name = p.Name,
-                            Price = p.Price,
-                            Description = p.Description,
-                            MaxPeople = p.MaxPeople,
-                            IsPerPerson = p.IsPerPerson
-                        };
-
-                        _context.Packages.Add(package);
-                        await _context.SaveChangesAsync();
-
-                        if (p.Features != null)
-                        {
-                            foreach (var f in p.Features)
-                            {
-                                _context.PackageFeatures.Add(new PackageFeature
-                                {
-                                    PackageId = package.Id,
-                                    FeatureText = f.FeatureText
-                                });
-                            }
-                        }
-                    }
-                }
-
-                await _context.SaveChangesAsync();
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Vendor created successfully",
-                    vendorId = vendor.Id,
-                    slug = vendor.Slug
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
         }
 
-        // =========================
-        // UPDATE VENDOR (IMPROVED)
-        // =========================
-        [HttpPut("{id}")]
-        [Authorize(Roles = "vendor,admin")]
-        public async Task<IActionResult> UpdateVendor(int id, [FromBody] CreateVendorDto dto)
+
+// GET ALL VENDORS (ADMIN)
+[HttpGet]
+[Authorize(Roles = "admin")]
+public async Task<IActionResult> GetAllVendors()
+{
+    var vendors = await _context.Vendors
+        .Include(v => v.User)
+        .Include(v => v.Packages)
+        .Include(v => v.VendorGalleries)
+        .Include(v => v.VendorCategory)
+        .ToListAsync();
+
+
+    return Ok(new
+    {
+        success = true,
+        vendors
+    });
+}
+
+
+
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> CreateVendor(
+          [FromForm] CreateVendorDto dto,
+          IFormFile? logo
+      )
         {
-            var vendor = await _context.Vendors.FindAsync(id);
+            var userId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
 
-            if (vendor == null)
-                return NotFound("Vendor not found");
+            var slug = SlugHelper.GenerateSlug(dto.VendorName);
 
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+            string? logoPath = null;
 
-            if (vendor.UserId != userId && !User.IsInRole("admin"))
-                return Forbid();
-
-            // update fields
-            vendor.VendorName = dto.VendorName;
-            vendor.Phone = dto.Phone;
-            vendor.Email = dto.Email;
-            vendor.Address = dto.Address;
-
-            // OPTIONAL: regenerate slug if name changed
-            var newSlug = SlugHelper.GenerateSlug(dto.VendorName);
-
-            if (vendor.Slug != newSlug)
+            if (logo != null)
             {
-                var exists = await _context.Vendors.AnyAsync(v => v.Slug == newSlug && v.Id != id);
-
-                if (exists)
-                    return BadRequest("Slug already exists");
-
-                vendor.Slug = newSlug;
+                logoPath = await FileUploadHelper.UploadFile(
+                    logo,
+                    "vendors"
+                );
             }
+
+            var vendor = new Vendor
+            {
+                UserId = userId,
+                VendorCategoryId = dto.VendorCategoryId,
+                VendorName = dto.VendorName,
+                Slug = slug,
+                Phone = dto.Phone,
+                Email = dto.Email,
+                Address = dto.Address,
+                Facebook = dto.Facebook,
+                Instagram = dto.Instagram,
+                Tiktok = dto.Tiktok,
+                LogoImg = logoPath ?? ""
+            };
+
+            _context.Vendors.Add(vendor);
 
             await _context.SaveChangesAsync();
 
             return Ok(new
             {
                 success = true,
-                message = "Vendor updated successfully"
+                vendorId = vendor.Id
             });
         }
+
+
+    
+
+
+
+        // UPDATE OWN VENDOR
+        [HttpPut("{id}")]
+        [Authorize]
+        public async Task<IActionResult> UpdateVendor(
+            int id,
+            [FromBody] CreateVendorDto dto
+        )
+        {
+
+
+            var userId=int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
+
+
+
+            var vendor =
+                await _context.Vendors
+                .FirstOrDefaultAsync(v=>v.Id==id);
+
+
+
+            if(vendor==null)
+            {
+                return NotFound("Vendor not found");
+            }
+
+
+
+            // OWNER CHECK
+
+            if(vendor.UserId != userId 
+               && !User.IsInRole("admin"))
+            {
+                return Forbid();
+            }
+
+
+
+
+            vendor.VendorName=dto.VendorName;
+
+            vendor.Phone=dto.Phone;
+
+            vendor.Email=dto.Email;
+
+            vendor.Address=dto.Address;
+
+
+
+            await _context.SaveChangesAsync();
+
+
+
+            return Ok(new
+            {
+                success=true,
+                message="Vendor updated"
+            });
+
+        }
+
+
+
+
+
+
+        // DELETE OWN VENDOR
+        [HttpDelete("{id}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteVendor(int id)
+        {
+            var userId=int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
+
+
+
+            var vendor =
+                await _context.Vendors
+                .FirstOrDefaultAsync(v=>v.Id==id);
+
+
+
+            if(vendor==null)
+            {
+                return NotFound();
+            }
+
+
+
+
+            if(vendor.UserId != userId
+               && !User.IsInRole("admin"))
+            {
+                return Forbid();
+            }
+
+
+
+            _context.Vendors.Remove(vendor);
+
+
+            await _context.SaveChangesAsync();
+
+
+
+            return Ok(new
+            {
+                success=true,
+                message="Vendor deleted"
+            });
+
+
+        }
+
+
+        // For vendor Galleries
+        [HttpPost("{vendorId}/gallery")]
+        [Authorize]
+public async Task<IActionResult> UploadGallery(
+    int vendorId,
+    List<IFormFile> images
+)
+{
+    var vendor = await _context.Vendors.FindAsync(vendorId);
+
+    if (vendor == null)
+        return NotFound();
+
+    foreach (var image in images)
+    {
+        var imagePath =
+            await FileUploadHelper.UploadFile(
+                image,
+                "vendors/gallery"
+            );
+
+        if (imagePath != null)
+        {
+            _context.VendorGalleries.Add(
+                new VendorGallery
+                {
+                    VendorId = vendorId,
+                    ImageUrl = imagePath
+                });
+        }
     }
+
+    await _context.SaveChangesAsync();
+
+    return Ok(new
+    {
+        success = true
+    });
+}
+
+
+//get
+[HttpGet("{vendorId}/gallery")]
+public async Task<IActionResult> GetGallery(int vendorId)
+{
+    var images = await _context.VendorGalleries
+        .Where(g => g.VendorId == vendorId)
+        .ToListAsync();
+
+    return Ok(images);
+}
+
+
+//Delete
+[HttpDelete("gallery/{id}")]
+public async Task<IActionResult> DeleteGallery(int id)
+{
+    var image = await _context.VendorGalleries.FindAsync(id);
+
+    if (image == null)
+        return NotFound();
+
+    _context.VendorGalleries.Remove(image);
+
+    await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                message = "Vendor image deleted"
+            });
+        }
+
+
+    }
+
 }

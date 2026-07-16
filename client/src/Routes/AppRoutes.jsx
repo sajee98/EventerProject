@@ -58,7 +58,6 @@ function AppRoutes() {
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="vendors" element={<Vendors />} />
-              <Route path="vendor-register" element={<VendorRegister />} />
             </Route>
           </Route>
         </Routes>

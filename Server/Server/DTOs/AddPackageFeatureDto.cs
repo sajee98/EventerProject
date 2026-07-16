@@ -1,6 +1,6 @@
 ﻿namespace Server.DTOs
 {
-    public class PackageFeatureDto
+    public class AddPackageFeatureDto
     {
         public string FeatureText { get; set; } = string.Empty;
     }

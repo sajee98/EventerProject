@@ -15,12 +15,13 @@ import {
   AlertCircle,
   Sparkles,
 } from "lucide-react";
+import { createVendor } from "../../api/vendorApi"; 
 
 const CATEGORIES = [
-  { id: 1, name: "Catering" },
-  { id: 2, name: "Decoration" },
-  { id: 3, name: "Sound & Lighting" },
-  { id: 4, name: "Photography & Video" },
+  { id: 1, name: "Photography & Video" },
+  { id: 2, name: "Catering" },
+  { id: 3, name: "Decoration" },
+  { id: 4, name: "Sound & Lighting" },
   { id: 5, name: "Venue" },
   { id: 6, name: "Entertainment" },
 ];
@@ -33,17 +34,8 @@ const PATTERNS = {
   tiktok: /^https?:\/\/(www\.)?tiktok\.com\/@.+/i,
 };
 
-const slugify = (text) =>
-  text
-    .toString()
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
 const INITIAL_FORM = {
   vendorName: "",
-  slug: "",
   vendorCategoryId: "",
   phone: "",
   email: "",
@@ -59,10 +51,6 @@ function validateField(name, value) {
       if (!value.trim()) return "Business name is required.";
       if (value.trim().length < 2) return "Name must be at least 2 characters.";
       if (value.trim().length > 60) return "Name must be under 60 characters.";
-      return "";
-    case "slug":
-      if (!value.trim()) return "A URL slug is required.";
-      if (!/^[a-z0-9-]+$/.test(value)) return "Use lowercase letters, numbers, and hyphens only.";
       return "";
     case "vendorCategoryId":
       if (!value) return "Select a category.";
@@ -111,13 +99,7 @@ function VendorRegister() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => {
-      const next = { ...prev, [name]: value };
-      if (name === "vendorName" && !touched.slug) {
-        next.slug = slugify(value);
-      }
-      return next;
-    });
+    setForm((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -128,7 +110,8 @@ function VendorRegister() {
   };
 
   const validateLogo = (file) => {
-    if (!file) return "Upload a logo image.";
+    // Logo is optional on the backend right now, so no "required" check here.
+    if (!file) return "";
     if (!file.type.startsWith("image/")) return "File must be an image.";
     if (file.size > 2 * 1024 * 1024) return "Image must be under 2MB.";
     return "";
@@ -137,7 +120,7 @@ function VendorRegister() {
   const handleLogoSelect = (file) => {
     const error = validateLogo(file);
     setLogoError(error);
-    if (!error) {
+    if (!error && file) {
       setLogo(file);
       setLogoPreview(URL.createObjectURL(file));
     }
@@ -176,15 +159,43 @@ function VendorRegister() {
 
     setIsSubmitting(true);
     try {
-      // Replace with your real API call, e.g.:
-      // const body = new FormData();
-      // Object.entries(form).forEach(([k, v]) => body.append(k, v));
-      // body.append("logoImg", logo);
-      // await fetch("/api/vendors", { method: "POST", body });
-      await new Promise((resolve) => setTimeout(resolve, 1400));
+      const body = new FormData();
+      body.append("VendorCategoryId", form.vendorCategoryId);
+      body.append("VendorName", form.vendorName.trim());
+      body.append("Phone", form.phone.trim());
+      body.append("Email", form.email.trim());
+      body.append("Address", form.address.trim());
+      if (form.facebook.trim()) body.append("Facebook", form.facebook.trim());
+      if (form.instagram.trim()) body.append("Instagram", form.instagram.trim());
+      if (form.tiktok.trim()) body.append("Tiktok", form.tiktok.trim());
+      if (logo) body.append("logo", logo);
+
+      // No manual token/header needed — the axios instance sends the auth
+      // cookie automatically as long as it's created with withCredentials: true.
+      const data = await createVendor(body);
+
+      if (!data.success) {
+        throw new Error(data.message || "Failed to register vendor.");
+      }
+
       setIsSuccess(true);
     } catch (err) {
-      setErrors((prev) => ({ ...prev, submit: "Something went wrong. Please try again." }));
+      if (err?.response?.status === 401) {
+        setErrors((prev) => ({
+          ...prev,
+          submit: "Your session expired. Please log in again.",
+        }));
+      } else if (err?.response?.status === 400) {
+        setErrors((prev) => ({
+          ...prev,
+          submit: err.response.data?.message || "Maximum 3 vendors allowed.",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          submit: err?.response?.data?.message || err.message || "Something went wrong. Please try again.",
+        }));
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -203,7 +214,7 @@ function VendorRegister() {
         <h2 className="mt-6 text-2xl font-bold text-[#1C1830]">Application submitted</h2>
         <p className="mt-2 max-w-sm text-sm text-[#8A85A0]">
           Thanks for registering <strong className="font-semibold text-[#1C1830]">{form.vendorName}</strong>.
-          Our team will review the details and get back within 1–2 business days.
+          You can now add packages and features from the Vendors table.
         </p>
         <button
           onClick={() => {
@@ -262,7 +273,7 @@ function VendorRegister() {
                   <p className="font-medium text-[#1C1830]">
                     {logo ? logo.name : "Drag & drop or click to upload"}
                   </p>
-                  <p className="text-xs text-[#B0ACC4]">PNG or JPG, up to 2MB</p>
+                  <p className="text-xs text-[#B0ACC4]">PNG or JPG, up to 2MB (optional)</p>
                 </div>
 
                 {logo && (
@@ -289,37 +300,17 @@ function VendorRegister() {
               {logoError && <FieldError message={logoError} />}
             </div>
 
-            {/* Name + Slug */}
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <Field
-                label="Business name"
-                name="vendorName"
-                icon={Store}
-                value={form.vendorName}
-                placeholder="Dream Decor"
-                error={touched.vendorName && errors.vendorName}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              />
-
-              <div>
-                <label className="mb-1.5 block text-xs font-semibold text-[#5F5A78]">Page URL</label>
-                <div className="relative">
-                  <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-xs text-[#B0ACC4]">
-                    /vendors/
-                  </span>
-                  <input
-                    name="slug"
-                    value={form.slug}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="dream-decor"
-                    className={inputClass(touched.slug && errors.slug, "pl-[4.4rem]")}
-                  />
-                </div>
-                {touched.slug && errors.slug && <FieldError message={errors.slug} />}
-              </div>
-            </div>
+            {/* Name */}
+            <Field
+              label="Business name"
+              name="vendorName"
+              icon={Store}
+              value={form.vendorName}
+              placeholder="Dream Decor"
+              error={touched.vendorName && errors.vendorName}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
 
             {/* Category */}
             <div className="mt-4">
@@ -454,9 +445,9 @@ function VendorRegister() {
                   <p className="truncate font-semibold text-[#1C1830]">
                     {form.vendorName || "Business name"}
                   </p>
-                  <p className="truncate text-xs text-[#B0ACC4]">
-                    /vendors/{form.slug || "your-slug"}
-                  </p>
+                  {categoryName && (
+                    <p className="truncate text-xs text-[#B0ACC4]">{categoryName}</p>
+                  )}
                 </div>
               </div>
 
@@ -477,6 +468,12 @@ function VendorRegister() {
                 </span>
               </div>
             </section>
+
+            {errors.submit && (
+              <div className="rounded-xl bg-[#FDF5F4] px-4 py-3">
+                <FieldError message={errors.submit} />
+              </div>
+            )}
 
             <button
               type="submit"
