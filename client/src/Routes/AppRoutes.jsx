@@ -13,6 +13,7 @@ const Services = lazy(() => import("../pages/user/Service"));
 const Category = lazy(() => import("../pages/user/Category"));
 const VendorDetails = lazy(() => import("../pages/user/VendorDetails"));
 const Checkout = lazy(() => import("../pages/user/Checkout"));
+const EditVendor = lazy(() => import("../pages/user/EditVendor.jsx"));
 
 //userProfile
 import UserProfileLayout from "../Layouts/UserProfileLayout";
@@ -50,6 +51,7 @@ function AppRoutes() {
               <Route path="dashboard" element={<Dashboard />} />
               <Route path="vendors" element={<Vendors />} />
               <Route path="vendor-register" element={<VendorRegister />} />
+              <Route path="vendors/edit/:id" element={<EditVendor />} />
             </Route>
           </Route>
 

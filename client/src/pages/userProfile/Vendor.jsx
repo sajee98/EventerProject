@@ -49,7 +49,7 @@ const SERVICE_ICON = {
 
 const STATUS_STYLE = {
   Active: "bg-[#EAFBF3] text-[#188F65]",
-  Pending: "bg-[#FFF6E6] text-[#B8790B]",
+  InActive: "bg-[#FFF6E6] text-[#B8790B]",
 };
 
 const PACKAGE_BADGE =
@@ -62,7 +62,7 @@ function mapVendor(v) {
     service: v.vendorCategory?.name ?? v.categoryName ?? "Uncategorized",
     email: v.email,
     phone: v.phone,
-    status: v.isActive ? "Active" : "Pending",
+    status: v.isActive ? "Active" : "inactive",
     logoImg: v.logoImg,
     packages: (v.packages ?? []).map((p) => ({
       id: p.id,
@@ -324,9 +324,9 @@ function Vendors() {
     openProfileModal(vendorId);
   };
 
-  const handleEdit = (vendorId) => {
-    navigate(`/user/vendors/${vendorId}/edit`);
-  };
+const handleEdit = (vendorId) => {
+  navigate(`/user/vendors/edit/${vendorId}`);
+};
 
   // ---- Profile modal handlers ----
 
@@ -351,7 +351,7 @@ function Vendors() {
       await updateVendor(vendor.id, { isActive: nextActive });
       setVendors((prev) =>
         prev.map((v) =>
-          v.id === vendor.id ? { ...v, status: nextActive ? "Active" : "Pending" } : v
+          v.id === vendor.id ? { ...v, status: nextActive ? "Active" : "inactive" } : v
         )
       );
     } catch (err) {
@@ -594,7 +594,7 @@ function Vendors() {
                       <td className="px-5 py-4">
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                            STATUS_STYLE[vendor.status] ?? STATUS_STYLE.Pending
+                            STATUS_STYLE[vendor.status] ?? STATUS_STYLE.InActive
                           }`}
                         >
                           {vendor.status}
@@ -1007,7 +1007,7 @@ function Vendors() {
                 </div>
                 <span
                   className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${
-                    STATUS_STYLE[profileVendor.status] ?? STATUS_STYLE.Pending
+                    STATUS_STYLE[profileVendor.status] ?? STATUS_STYLE.InActive
                   }`}
                 >
                   {profileVendor.status}

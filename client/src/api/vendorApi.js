@@ -20,7 +20,7 @@ export async function createVendor(formData) {
     return res.data;
 }
 
-
+//update by id
 export async function updateVendor(id, data) {
     const res = await api.put(
         `/vendor/${id}`,
@@ -30,8 +30,23 @@ export async function updateVendor(id, data) {
     return res.data;
 }
 
+//patch by id
+export async function patchVendor(id, data) {
+    const res = await api.put(
+        `/vendor/${id}/status`,
+        data
+    );
+    return res.data;
+}
 
 
+//get vendor by id
+export async function getVendorById(id) {
+    const res = await api.get(
+        `/vendor/${id}`
+    );
+    return res.data;
+}
 
 export async function deleteVendor(id) {
     const res = await api.delete(

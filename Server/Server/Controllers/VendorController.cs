@@ -27,7 +27,6 @@ namespace Server.Controllers
 
 
         // GET MY VENDORS
-
         [HttpGet("my")]
         [Authorize]
         public async Task<IActionResult> GetMyVendors()
@@ -58,9 +57,76 @@ namespace Server.Controllers
 
         }
 
+        // get logged in vendor by id
+        [HttpGet("{id}")]
+        [Authorize]
+        public async Task<IActionResult> GetMyVendorById(int id)
+        {
+            // Get logged-in user id from JWT
+            var userId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
 
-// GET ALL VENDORS (ADMIN)
-[HttpGet]
+            // Find only this user's vendor
+            var vendor = await _context.Vendors
+                .Include(v => v.User)
+                .Include(v => v.VendorCategory)
+                .Include(v => v.Packages)
+                    .ThenInclude(p => p.PackageFeatures)
+                .Include(v => v.VendorGalleries)
+                .Include(v => v.Reviews)
+                .FirstOrDefaultAsync(v => v.Id == id && v.UserId == userId);
+
+            // Vendor not found
+            if (vendor == null)
+            {
+                return NotFound(new
+                {
+                    success = false,
+                    message = "Vendor not found."
+                });
+            }
+
+            // Return vendor
+            return Ok(new
+            {
+                success = true,
+                vendor
+            });
+        }
+
+        //patch status for active or inactive
+        [HttpPut("{id}/status")]
+        [Authorize]
+
+        public async Task<IActionResult> UpdateVendorStatus(int id, [FromBody] bool isActive)
+        {
+            var userId = int.Parse(
+                User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+            );
+            var vendor = await _context.Vendors.FindAsync(id);
+            if (vendor == null)
+            {
+                return NotFound("Vendor not found");
+            }
+            // OWNER CHECK
+            if (vendor.UserId != userId && !User.IsInRole("admin"))
+            {
+                return Forbid();
+            }
+            vendor.IsActive = isActive;
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                success = true,
+                message = "Vendor status updated"
+            });
+        }
+
+
+
+        // GET ALL VENDORS (ADMIN)
+        [HttpGet]
 [Authorize(Roles = "admin")]
 public async Task<IActionResult> GetAllVendors()
 {
@@ -295,7 +361,7 @@ public async Task<IActionResult> UploadGallery(
 }
 
 
-//get
+//get for gallery
 [HttpGet("{vendorId}/gallery")]
 public async Task<IActionResult> GetGallery(int vendorId)
 {
